@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Plugin.Media;
+using Plugin.Media.Abstractions;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace XamarinMediaPlugin
 {
-	public partial class MainPage : ContentPage
+    public partial class MainPage : ContentPage
 	{
-		public MainPage()
-		{
-			InitializeComponent();
+        protected async override void OnAppearing()
+        {
+            base.OnAppearing();
 
             takePhoto.Clicked += async (sender, args) =>
             {
 
                 if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
                 {
-                    DisplayAlert("No Camera", ":( No camera avaialble.", "OK");
+                    await DisplayAlert("No Camera", ":( No camera avaialble.", "OK");
                     return;
                 }
 
@@ -36,7 +34,7 @@ namespace XamarinMediaPlugin
                 if (file == null)
                     return;
 
-                DisplayAlert("File Location", file.Path, "OK");
+                await DisplayAlert("File Location", file.Path, "OK");
 
                 image.Source = ImageSource.FromStream(() =>
                 {
@@ -50,7 +48,7 @@ namespace XamarinMediaPlugin
             {
                 if (!CrossMedia.Current.IsPickPhotoSupported)
                 {
-                    DisplayAlert("Photos Not Supported", ":( Permission not granted to photos.", "OK");
+                    await DisplayAlert("Photos Not Supported", ":( Permission not granted to photos.", "OK");
                     return;
                 }
                 var file = await Plugin.Media.CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions
@@ -75,7 +73,7 @@ namespace XamarinMediaPlugin
             {
                 if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakeVideoSupported)
                 {
-                    DisplayAlert("No Camera", ":( No camera avaialble.", "OK");
+                    await DisplayAlert("No Camera", ":( No camera avaialble.", "OK");
                     return;
                 }
 
@@ -88,7 +86,7 @@ namespace XamarinMediaPlugin
                 if (file == null)
                     return;
 
-                DisplayAlert("Video Recorded", "Location: " + file.Path, "OK");
+                await DisplayAlert("Video Recorded", "Location: " + file.Path, "OK");
 
                 file.Dispose();
             };
@@ -97,7 +95,7 @@ namespace XamarinMediaPlugin
             {
                 if (!CrossMedia.Current.IsPickVideoSupported)
                 {
-                    DisplayAlert("Videos Not Supported", ":( Permission not granted to videos.", "OK");
+                    await DisplayAlert("Videos Not Supported", ":( Permission not granted to videos.", "OK");
                     return;
                 }
                 var file = await CrossMedia.Current.PickVideoAsync();
@@ -105,9 +103,14 @@ namespace XamarinMediaPlugin
                 if (file == null)
                     return;
 
-                DisplayAlert("Video Selected", "Location: " + file.Path, "OK");
+                await DisplayAlert("Video Selected", "Location: " + file.Path, "OK");
                 file.Dispose();
             };
+        }
+
+        public MainPage()
+		{
+			InitializeComponent();
         }
 	}
 }
